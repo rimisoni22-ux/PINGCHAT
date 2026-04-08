@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mini WhatsApp</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .app {
+            width: 420px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            background: #25d366;
+            color: white;
+            font-weight: bold;
+            font-size: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+
+        .title h2 {
+            margin: 0;
+            color: #075e54;
+        }
+
+        .title p {
+            margin: 0;
+            font-size: 12px;
+            color: #555;
+        }
+
+        /* DARK MODE TOGGLE */
+        .dark-mode-toggle {
+            margin-left: auto;
+            background: #128c7e;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* NEW CHAT BUTTON */
+        .new-chat {
+            text-align: right;
+            margin-bottom: 15px;
+        }
+
+        .new-chat button {
+            background: #25d366;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .new-chat button:hover {
+            background: #1ebe5d;
+        }
+
+        /* CHAT CARD */
+        .chat {
+            background: #f0f2f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .chat p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .from-to {
+            font-size: 13px;
+            font-weight: bold;
+            color: #075e54;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .msg {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .actions button {
+            border: none;
+            padding: 5px 10px;
+            font-size: 13px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .edit { background: #34b7f1; }
+        .delete { background: #e74c3c; }
+        .edit:hover { background: #1da1db; }
+        .delete:hover { background: #c0392b; }
+
+        .time {
+            font-size: 11px;
+            color: #777;
+            margin-top: 8px;
+        }
+
+        /* DARK MODE STYLES */
+        body.dark-mode { background: #121212; color: #eee; }
+        body.dark-mode .app { background: #1e1e1e; color: #eee; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        body.dark-mode .chat { background: #2c2c2c; color: #eee; }
+        body.dark-mode .msg { background: #3a3a3a; color: #eee; }
+        body.dark-mode .from-to { color: #a0e0b0; }
+        body.dark-mode .time { color: #bbb; }
+        body.dark-mode .new-chat button,
+        body.dark-mode .dark-mode-toggle { background: #25d366; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="logo">💬</div>
+        <div class="title">
+            <h2>Mini WhatsApp</h2>
+            <p>Simple Chat Application</p>
+        </div>
+        <button class="dark-mode-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+    </div>
+
+    <!-- NEW CHAT -->
+    <div class="new-chat">
+        <form method="GET" action="/chats/new">
+            <button>+ New Chat</button>
+        </form>
+    </div>
+
+    <!-- CHAT LIST -->
+    <% if (chats.length === 0) { %>
+        <p>No chats available. Start a new chat!</p>
+    <% } %>
+
+    <% chats.forEach(chat => { %>
+        <div class="chat">
+            <p class="from-to">
+                From <%= chat.from %> 
+                <% if (typeof currentUser !== 'undefined' && currentUser === chat.from) { %>
+                    (You)
+                <% } %>
+                → To <%= chat.to %>
+                <% if (typeof currentUser !== 'undefined' && currentUser === chat.to) { %>
+                    (You)
+                <% } %>
+            </p>
+
+            <div class="msg"><%= chat.msg %></div>
+
+            <div class="actions">
+                <form method="GET" action="/chats/<%= chat._id %>/edit">
+                    <button class="edit">Edit</button>
+                </form>
+                <form method="POST" action="/chats/<%= chat._id %>?_method=DELETE">
+                    <button class="delete">Delete</button>
+                </form>
+            </div>
+
+            <p class="time"><%= chat.created_at.toLocaleString() %></p>
+        </div>
+    <% }) %>
+
+</div>
+
+<script>
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+    }
+</script>
+
+</body>
+</html>

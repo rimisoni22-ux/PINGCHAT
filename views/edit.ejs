@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Chat</title>
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #43cea2, #185a9d);
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --btn-bg: #43cea2;
+        }
+
+        body.dark {
+            --bg-gradient: linear-gradient(135deg, #232526, #414345);
+            --card-bg: #1f1f1f;
+            --text-color: #f1f1f1;
+            --btn-bg: #4caf50;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg-gradient);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            transition: 0.3s;
+        }
+
+        .edit-box {
+            background: var(--card-bg);
+            width: 420px;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .chat-id {
+            font-size: 12px;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .info {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: var(--btn-bg);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--btn-bg);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .cancel-btn {
+            background-color: #777;
+        }
+
+        .dark-toggle {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            cursor: pointer;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="edit-box">
+        <h2>Edit Chat</h2>
+
+        <p class="chat-id">Chat ID: <%= chat._id %></p>
+
+        <p class="info">
+            From <b><%= chat.from %></b> to <b><%= chat.to %></b>
+        </p>
+
+        <form method="POST" action="/chats/<%= chat._id %>?_method=PUT">
+            <textarea name="msg" required><%= chat.msg %></textarea>
+
+            <div class="btn-group">
+                <button type="submit">Update</button>
+                <button type="button" class="cancel-btn" onclick="history.back()">Cancel</button>
+            </div>
+        </form>
+
+        <div class="dark-toggle" onclick="toggleDarkMode()">
+            🌙 Toggle Dark Mode
+        </div>
+    </div>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark");
+        }
+    </script>
+
+</body>
+</html>
