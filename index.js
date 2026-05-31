@@ -18,9 +18,9 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 // MIDDLEWARE
-app.use(express.static(path.join(__dirname, "public")));// serve static files
-app.use(express.urlencoded({ extended: true }));// read form data
-app.use(methodOverride("_method"));// post to http
+app.use(express.static(path.join(__dirname, "public"))); // Serve static files
+app.use(express.urlencoded({ extended: true }));       // Read form data
+app.use(methodOverride("_method"));                     // Method override for PUT/DELETE
 
 // DATABASE CONNECTION
 async function main() {
@@ -49,8 +49,6 @@ app.post("/chats", asyncWrap(async (req, res) => {
         from,
         to,
         msg,
-        profileImageFrom: "/images/default-user.png",
-        profileImageTo: "/images/default-user.png",
         created_at: new Date()
     });
 
@@ -59,7 +57,7 @@ app.post("/chats", asyncWrap(async (req, res) => {
 }));
 
 // SHOW CHAT ROUTE
-app.get("/chats/:id", asyncWrap(async (req, res) => { //nnttc
+app.get("/chats/:id", asyncWrap(async (req, res) => {
     const { id } = req.params;
     const chat = await Chat.findById(id);
     if (!chat) throw new ExpressError(404, "Chat not found");
